@@ -77,10 +77,10 @@ const TopPanel = memo(function TopPanel() {
 
       {/* Right: System tray */}
       <div className="flex items-center gap-1">
-        <button className="h-7 px-1.5 rounded hover:bg-[var(--bg-hover)] transition-colors hide-on-mobile">
+        <button className="h-7 px-1.5 rounded hover:bg-[var(--bg-hover)] transition-colors hide-on-tablet">
           <Accessibility size={14} />
         </button>
-        <button className="h-7 px-1.5 rounded hover:bg-[var(--bg-hover)] transition-colors hide-on-mobile">
+        <button className="h-7 px-1.5 rounded hover:bg-[var(--bg-hover)] transition-colors hide-on-tablet">
           <Keyboard size={14} />
         </button>
         <button className="h-7 px-1.5 rounded hover:bg-[var(--bg-hover)] transition-colors">
@@ -183,7 +183,12 @@ const TopPanel = memo(function TopPanel() {
         .show-only-on-mobile {
           display: none;
         }
-        @media (max-width: 640px) {
+        @media (max-width: 1024px) {
+          .hide-on-tablet {
+            display: none !important;
+          }
+        }
+        @media (max-width: 768px) {
           .hide-on-mobile {
             display: none !important;
           }
