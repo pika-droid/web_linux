@@ -67,7 +67,8 @@ const TopPanel = memo(function TopPanel() {
         onClick={handleClockClick}
         className="absolute left-1/2 -translate-x-1/2 h-7 px-2 rounded hover:bg-[var(--bg-hover)] transition-colors text-xs font-medium group relative"
       >
-        <span>{formattedTime}</span>
+        <span className="hide-on-mobile">{formattedTime}</span>
+        <span className="show-only-on-mobile">{format(time, 'h:mm a')}</span>
         {/* Tooltip */}
         <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 px-2 py-1 rounded bg-[var(--bg-tooltip)] text-[var(--text-primary)] text-[10px] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-[5000]">
           {formattedDate}
@@ -76,10 +77,10 @@ const TopPanel = memo(function TopPanel() {
 
       {/* Right: System tray */}
       <div className="flex items-center gap-1">
-        <button className="h-7 px-1.5 rounded hover:bg-[var(--bg-hover)] transition-colors">
+        <button className="h-7 px-1.5 rounded hover:bg-[var(--bg-hover)] transition-colors hide-on-mobile">
           <Accessibility size={14} />
         </button>
-        <button className="h-7 px-1.5 rounded hover:bg-[var(--bg-hover)] transition-colors">
+        <button className="h-7 px-1.5 rounded hover:bg-[var(--bg-hover)] transition-colors hide-on-mobile">
           <Keyboard size={14} />
         </button>
         <button className="h-7 px-1.5 rounded hover:bg-[var(--bg-hover)] transition-colors">
@@ -90,7 +91,7 @@ const TopPanel = memo(function TopPanel() {
         </button>
         <button className="h-7 px-1.5 rounded hover:bg-[var(--bg-hover)] transition-colors flex items-center gap-1">
           <Battery size={14} />
-          <span className="text-[10px]">100%</span>
+          <span className="text-[10px] hide-on-mobile">100%</span>
         </button>
         <div className="relative" ref={menuRef}>
           <button
@@ -178,6 +179,17 @@ const TopPanel = memo(function TopPanel() {
         @keyframes menuAppear {
           from { opacity: 0; transform: scale(0.95) translateY(-4px); }
           to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .show-only-on-mobile {
+          display: none;
+        }
+        @media (max-width: 640px) {
+          .hide-on-mobile {
+            display: none !important;
+          }
+          .show-only-on-mobile {
+            display: inline !important;
+          }
         }
       `}</style>
     </div>
