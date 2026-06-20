@@ -15,10 +15,10 @@ vi.mock('../../apps/Terminal', () => {
 });
 
 describe('AppRouter', () => {
-  it('propagates windowId prop to routed app components', () => {
+  it('propagates windowId prop to routed app components', async () => {
     render(<AppRouter appId="terminal" windowId="test-window-123" />);
 
-    const terminalEl = screen.getByTestId('mock-terminal');
+    const terminalEl = await screen.findByTestId('mock-terminal');
     expect(terminalEl).toBeDefined();
     expect(terminalEl.getAttribute('data-window-id')).toBe('test-window-123');
   });

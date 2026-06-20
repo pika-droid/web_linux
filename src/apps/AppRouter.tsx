@@ -3,62 +3,64 @@
 // ============================================================
 
 import NotImplemented from '@/components/NotImplemented';
-import FileManager from './FileManager';
-import Terminal from './Terminal';
-import Calculator from './Calculator';
-import TextEditor from './TextEditor';
-import Settings from './Settings';
-import SystemMonitor from './SystemMonitor';
-import Calendar from './Calendar';
-import Notes from './Notes';
-import Todo from './Todo';
-import Clock from './Clock';
-import Spreadsheet from './Spreadsheet';
-import ArchiveManager from './ArchiveManager';
-import Browser from './Browser';
-import Email from './Email';
-import Chat from './Chat';
-import Weather from './Weather';
-import MusicPlayer from './MusicPlayer';
-import VideoPlayer from './VideoPlayer';
-import ImageViewer from './ImageViewer';
-import PhotoEditor from './PhotoEditor';
-import VoiceRecorder from './VoiceRecorder';
-import ScreenRecorder from './ScreenRecorder';
-import Minesweeper from './Minesweeper';
-import Snake from './Snake';
-import Tetris from './Tetris';
-import TicTacToe from './TicTacToe';
-import Game2048 from './Game2048';
-import Sudoku from './Sudoku';
-import Chess from './Chess';
-import Memory from './Memory';
-import Pong from './Pong';
-import Solitaire from './Solitaire';
-import CodeEditor from './CodeEditor';
-import JsonFormatter from './JsonFormatter';
-import RegexTester from './RegexTester';
-import MarkdownPreview from './MarkdownPreview';
-import GitClient from './GitClient';
-import ApiTester from './ApiTester';
-import Base64Tool from './Base64Tool';
-import ColorPalette from './ColorPalette';
-import Drawing from './Drawing';
-import ColorPicker from './ColorPicker';
-import ImageGallery from './ImageGallery';
-import AsciiArt from './AsciiArt';
-import DocumentViewer from './DocumentViewer';
-import Reminders from './Reminders';
-import Contacts from './Contacts';
-import PasswordManager from './PasswordManager';
-import Whiteboard from './Whiteboard';
-import RssReader from './RssReader';
-import FtpClient from './FtpClient';
-import NetworkTools from './NetworkTools';
-import MediaConverter from './MediaConverter';
-import FlappyBird from './FlappyBird';
-import MatrixRain from './MatrixRain';
-import React, { type FC } from 'react';
+import React, { type FC, lazy, Suspense } from 'react';
+import { Loader2 } from 'lucide-react';
+
+const FileManager = lazy(() => import('./FileManager'));
+const Terminal = lazy(() => import('./Terminal'));
+const Calculator = lazy(() => import('./Calculator'));
+const TextEditor = lazy(() => import('./TextEditor'));
+const Settings = lazy(() => import('./Settings'));
+const SystemMonitor = lazy(() => import('./SystemMonitor'));
+const Calendar = lazy(() => import('./Calendar'));
+const Notes = lazy(() => import('./Notes'));
+const Todo = lazy(() => import('./Todo'));
+const Clock = lazy(() => import('./Clock'));
+const Spreadsheet = lazy(() => import('./Spreadsheet'));
+const ArchiveManager = lazy(() => import('./ArchiveManager'));
+const Browser = lazy(() => import('./Browser'));
+const Email = lazy(() => import('./Email'));
+const Chat = lazy(() => import('./Chat'));
+const Weather = lazy(() => import('./Weather'));
+const MusicPlayer = lazy(() => import('./MusicPlayer'));
+const VideoPlayer = lazy(() => import('./VideoPlayer'));
+const ImageViewer = lazy(() => import('./ImageViewer'));
+const PhotoEditor = lazy(() => import('./PhotoEditor'));
+const VoiceRecorder = lazy(() => import('./VoiceRecorder'));
+const ScreenRecorder = lazy(() => import('./ScreenRecorder'));
+const Minesweeper = lazy(() => import('./Minesweeper'));
+const Snake = lazy(() => import('./Snake'));
+const Tetris = lazy(() => import('./Tetris'));
+const TicTacToe = lazy(() => import('./TicTacToe'));
+const Game2048 = lazy(() => import('./Game2048'));
+const Sudoku = lazy(() => import('./Sudoku'));
+const Chess = lazy(() => import('./Chess'));
+const Memory = lazy(() => import('./Memory'));
+const Pong = lazy(() => import('./Pong'));
+const Solitaire = lazy(() => import('./Solitaire'));
+const CodeEditor = lazy(() => import('./CodeEditor'));
+const JsonFormatter = lazy(() => import('./JsonFormatter'));
+const RegexTester = lazy(() => import('./RegexTester'));
+const MarkdownPreview = lazy(() => import('./MarkdownPreview'));
+const GitClient = lazy(() => import('./GitClient'));
+const ApiTester = lazy(() => import('./ApiTester'));
+const Base64Tool = lazy(() => import('./Base64Tool'));
+const ColorPalette = lazy(() => import('./ColorPalette'));
+const Drawing = lazy(() => import('./Drawing'));
+const ColorPicker = lazy(() => import('./ColorPicker'));
+const ImageGallery = lazy(() => import('./ImageGallery'));
+const AsciiArt = lazy(() => import('./AsciiArt'));
+const DocumentViewer = lazy(() => import('./DocumentViewer'));
+const Reminders = lazy(() => import('./Reminders'));
+const Contacts = lazy(() => import('./Contacts'));
+const PasswordManager = lazy(() => import('./PasswordManager'));
+const Whiteboard = lazy(() => import('./Whiteboard'));
+const RssReader = lazy(() => import('./RssReader'));
+const FtpClient = lazy(() => import('./FtpClient'));
+const NetworkTools = lazy(() => import('./NetworkTools'));
+const MediaConverter = lazy(() => import('./MediaConverter'));
+const FlappyBird = lazy(() => import('./FlappyBird'));
+const MatrixRain = lazy(() => import('./MatrixRain'));
 
 export interface AppProps {
   windowId?: string;
@@ -188,10 +190,20 @@ const AppRouter: FC<AppRouterProps> = ({ appId, windowId }) => {
   };
 
   const element = getAppElement();
-  if (React.isValidElement(element)) {
-    return React.cloneElement(element, { windowId } as any);
-  }
-  return element;
+  const rendered = React.isValidElement(element)
+    ? React.cloneElement(element, { windowId } as any)
+    : element;
+
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col items-center justify-center h-full text-xs text-[var(--text-secondary)] bg-[var(--bg-window)] gap-2">
+        <Loader2 className="w-5 h-5 animate-spin text-[var(--accent-primary)]" />
+        <span>Loading...</span>
+      </div>
+    }>
+      {rendered}
+    </Suspense>
+  );
 };
 
 export default AppRouter;
