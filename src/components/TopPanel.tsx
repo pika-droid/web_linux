@@ -42,7 +42,7 @@ const TopPanel = memo(function TopPanel() {
 
   return (
     <div
-      className="fixed top-0 left-0 right-0 z-[200] flex items-center justify-between px-2 text-xs font-medium select-none"
+      className="fixed top-0 left-0 right-0 z-[200] flex items-center px-2 text-xs font-medium select-none"
       style={{
         height: 28,
         background: 'var(--bg-panel)',
@@ -53,7 +53,7 @@ const TopPanel = memo(function TopPanel() {
       }}
     >
       {/* Left: Activities */}
-      <div className="flex items-center">
+      <div className="flex-1 flex items-center justify-start min-w-0">
         <button
           onClick={handleActivities}
           className="h-7 px-3 rounded hover:bg-[var(--bg-hover)] transition-colors text-xs font-medium"
@@ -63,20 +63,22 @@ const TopPanel = memo(function TopPanel() {
       </div>
 
       {/* Center: Clock */}
-      <button
-        onClick={handleClockClick}
-        className="absolute left-1/2 -translate-x-1/2 h-7 px-2 rounded hover:bg-[var(--bg-hover)] transition-colors text-xs font-medium group relative"
-      >
-        <span className="hide-on-mobile">{formattedTime}</span>
-        <span className="show-only-on-mobile">{format(time, 'h:mm a')}</span>
-        {/* Tooltip */}
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 px-2 py-1 rounded bg-[var(--bg-tooltip)] text-[var(--text-primary)] text-[10px] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-[5000]">
-          {formattedDate}
-        </div>
-      </button>
+      <div className="flex items-center justify-center flex-shrink-0 px-2">
+        <button
+          onClick={handleClockClick}
+          className="h-7 px-2 rounded hover:bg-[var(--bg-hover)] transition-colors text-xs font-medium group relative"
+        >
+          <span className="hide-on-mobile">{formattedTime}</span>
+          <span className="show-only-on-mobile">{format(time, 'h:mm a')}</span>
+          {/* Tooltip */}
+          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 px-2 py-1 rounded bg-[var(--bg-tooltip)] text-[var(--text-primary)] text-[10px] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-[5000]">
+            {formattedDate}
+          </div>
+        </button>
+      </div>
 
       {/* Right: System tray */}
-      <div className="flex items-center gap-1">
+      <div className="flex-1 flex items-center justify-end min-w-0 gap-1">
         <button className="h-7 px-1.5 rounded hover:bg-[var(--bg-hover)] transition-colors hide-on-tablet">
           <Accessibility size={14} />
         </button>
