@@ -161,8 +161,12 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     } else if (action.type === 'ADD_NOTIFICATION') {
       enrichedAction = {
         ...action,
-        id: (action as any).id || generateId(),
-        timestamp: (action as any).timestamp || Date.now(),
+        notification: {
+          isRead: false,
+          ...action.notification,
+          id: (action.notification as any).id || generateId(),
+          timestamp: (action.notification as any).timestamp || Date.now(),
+        }
       } as any;
     } else if (action.type === 'ADD_DESKTOP_ICON') {
       enrichedAction = {
@@ -209,7 +213,7 @@ export const useNotifications = () => {
   return {
     notifications: state.notifications,
     addNotification: useCallback(
-      (n: Omit<Notification, 'id' | 'timestamp'>) => dispatch({ type: 'ADD_NOTIFICATION', notification: n }),
+      (n: Omit<Notification, 'id' | 'timestamp' | 'isRead'> & { isRead?: boolean }) => dispatch({ type: 'ADD_NOTIFICATION', notification: n }),
       [dispatch]
     ),
     removeNotification: useCallback((id: string) => dispatch({ type: 'REMOVE_NOTIFICATION', id }), [dispatch]),
