@@ -27,8 +27,8 @@ interface WindowFrameProps {
 const WindowFrame = memo(function WindowFrame({ window: win, children }: WindowFrameProps) {
   const { dispatch } = useOS();
   const frameRef = useRef<HTMLDivElement>(null);
-  const dragRef = useRef<{ isDragging: boolean; startX: number; startY: number; origX: number; origY: number } | null>(null);
-  const resizeRef = useRef<{ isResizing: boolean; edge: string; startX: number; startY: number; origW: number; origH: number; origX: number; origY: number } | null>(null);
+  const dragRef = useRef<{ isDragging: boolean; startX: number; startY: number; origX: number; origY: number; currentX?: number; currentY?: number } | null>(null);
+  const resizeRef = useRef<{ isResizing: boolean; edge: string; startX: number; startY: number; origW: number; origH: number; origX: number; origY: number; currentX?: number; currentY?: number; currentW?: number; currentH?: number } | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
 
@@ -57,6 +57,8 @@ const WindowFrame = memo(function WindowFrame({ window: win, children }: WindowF
         startY: e.clientY,
         origX: win.position.x,
         origY: win.position.y,
+        currentX: win.position.x,
+        currentY: win.position.y,
       };
       setIsDragging(true);
     },
@@ -92,6 +94,10 @@ const WindowFrame = memo(function WindowFrame({ window: win, children }: WindowF
         origH: win.size.height,
         origX: win.position.x,
         origY: win.position.y,
+        currentX: win.position.x,
+        currentY: win.position.y,
+        currentW: win.size.width,
+        currentH: win.size.height,
       };
       setIsResizing(true);
     },
@@ -119,7 +125,14 @@ const WindowFrame = memo(function WindowFrame({ window: win, children }: WindowF
         const vw = window.innerWidth;
         ny = Math.max(TOP_PANEL_HEIGHT, ny);
         nx = Math.min(Math.max(nx, -(win.size.width - 100)), vw - 100);
-        dispatch({ type: 'MOVE_WINDOW', windowId: win.id, position: { x: nx, y: ny } });
+
+        dragRef.current.currentX = nx;
+        dragRef.current.currentY = ny;
+
+        if (frameRef.current) {
+          frameRef.current.style.left = `${nx}px`;
+          frameRef.current.style.top = `${ny}px`;
+        }
       }
       if (resizeRef.current?.isResizing) {
         const { edge, startX, startY, origW, origH, origX, origY } = resizeRef.current;
@@ -137,11 +150,39 @@ const WindowFrame = memo(function WindowFrame({ window: win, children }: WindowF
           ny = origY + (origH - nh);
           ny = Math.max(TOP_PANEL_HEIGHT, ny);
         }
-        dispatch({ type: 'MOVE_WINDOW', windowId: win.id, position: { x: nx, y: ny } });
-        dispatch({ type: 'RESIZE_WINDOW', windowId: win.id, size: { width: nw, height: nh } });
+
+        resizeRef.current.currentX = nx;
+        resizeRef.current.currentY = ny;
+        resizeRef.current.currentW = nw;
+        resizeRef.current.currentH = nh;
+
+        if (frameRef.current) {
+          frameRef.current.style.left = `${nx}px`;
+          frameRef.current.style.top = `${ny}px`;
+          frameRef.current.style.width = `${nw}px`;
+          frameRef.current.style.height = `${nh}px`;
+        }
       }
     };
     const onUp = () => {
+      if (dragRef.current?.isDragging) {
+        const { currentX, currentY, origX, origY } = dragRef.current;
+        if (currentX !== undefined && currentY !== undefined && (currentX !== origX || currentY !== origY)) {
+          dispatch({ type: 'MOVE_WINDOW', windowId: win.id, position: { x: currentX, y: currentY } });
+        }
+      }
+      if (resizeRef.current?.isResizing) {
+        const { currentX, currentY, currentW, currentH, origX, origY, origW, origH } = resizeRef.current;
+        if (
+          currentX !== undefined && currentY !== undefined &&
+          currentW !== undefined && currentH !== undefined &&
+          (currentX !== origX || currentY !== origY || currentW !== origW || currentH !== origH)
+        ) {
+          dispatch({ type: 'MOVE_WINDOW', windowId: win.id, position: { x: currentX, y: currentY } });
+          dispatch({ type: 'RESIZE_WINDOW', windowId: win.id, size: { width: currentW, height: currentH } });
+        }
+      }
+
       dragRef.current = null;
       resizeRef.current = null;
       setIsDragging(false);
